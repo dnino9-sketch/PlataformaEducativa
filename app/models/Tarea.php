@@ -1,13 +1,14 @@
 <?php
-// app/models/Tarea.php
+require_once __DIR__ . '/../core/Database.php';
+
 class Tarea {
     public $id;
     public $materia;
     public $grado;
     public $curso;
     public $descripcion;
-    public $estado;  // Pendiente, Entregada, En revisión
-    
+    public $estado;
+
     public function __construct($id, $materia, $grado, $curso, $descripcion, $estado) {
         $this->id = $id;
         $this->materia = $materia;
@@ -16,33 +17,41 @@ class Tarea {
         $this->descripcion = $descripcion;
         $this->estado = $estado;
     }
-    
-    // Método para traer todas las tareas (simulación)
+
+    // Obtener todas las tareas desde la base de datos
     public static function obtenerTareas() {
-        // Si hay tareas guardadas en sesión las usamos
-        // para que las tareas creadas nuevas también aparezcan
-        if (isset($_SESSION['tareas']) && !empty($_SESSION['tareas'])) {
-            return $_SESSION['tareas'];
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->query("SELECT * FROM tareas ORDER BY id DESC");
+        $tareas = [];
+        while ($row = $stmt->fetch()) {
+            $tareas[] = new Tarea($row->id, $row->materia, $row->grado, $row->curso, $row->descripcion, $row->estado);
         }
-        // Si no hay sesión, retornamos tareas simuladas por defecto
-        return [
-            new Tarea(1, "Matemática", "4° Grado A", "Curso A", "Ejercicios de álgebra", "Pendiente"),
-            new Tarea(2, "Ciencias", "4° Grado A", "Curso A", "Proyecto de biología", "Entregada"),
-            new Tarea(3, "Español", "4° Grado A", "Curso A", "Resumen de lectura", "En revisión"),
-        ];
+        return $tareas;
     }
 
-    // Método para obtener una tarea específica por su ID
+    // Obtener tarea específica por ID desde base de datos
     public static function obtenerTareaPorId($id) {
-        // Obtenemos todas las tareas (de sesión o simuladas)
-        $tareas = self::obtenerTareas();
-        // Buscamos la tarea que coincida con el ID
-        foreach ($tareas as $tarea) {
-            if ($tarea->id == $id) {
-                return $tarea;
-            }
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT * FROM tareas WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        if ($row) {
+            return new Tarea($row->id, $row->materia, $row->grado, $row->curso, $row->descripcion, $row->estado);
         }
-        // Si no se encuentra retornamos null
         return null;
+    }
+
+    // Crear nueva tarea en base de datos
+    public static function crear($materia, $grado, $curso, $descripcion, $estado) {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("INSERT INTO tareas (materia, grado, curso, descripcion, estado) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$materia, $grado, $curso, $descripcion, $estado]);
+    }
+
+    // Actualizar tarea existente en base de datos
+    public static function actualizar($id, $materia, $grado, $curso, $descripcion, $estado) {
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("UPDATE tareas SET materia = ?, grado = ?, curso = ?, descripcion = ?, estado = ? WHERE id = ?");
+        return $stmt->execute([$materia, $grado, $curso, $descripcion, $estado, $id]);
     }
 }
