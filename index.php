@@ -35,6 +35,13 @@ switch ($action) {
         $tareaController->ver();
         break;
 
+        case 'editar_tarea':
+        $tareaController->editar();
+        break;
+       case 'actualizar_tarea':
+        $tareaController->actualizar();
+        break;
+
     default:
         $tareaController->index();
         break;

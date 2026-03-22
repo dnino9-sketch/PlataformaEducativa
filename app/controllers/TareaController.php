@@ -76,4 +76,65 @@ class TareaController {
     $pageTitle = "Ver Tarea - " . $tarea->materia;
     require_once __DIR__ . '/../views/ver_tarea.php';
 }
+// Mostrar formulario para editar tarea
+public function editar() {
+    verificarSesionActiva();
+
+    $id = $_GET['id'] ?? null;
+    if ($id === null) {
+        header("Location: /PlataformaEducativa/");
+        exit();
+    }
+
+    $tarea = Tarea::obtenerTareaPorId($id);
+    if ($tarea === null) {
+        header("Location: /PlataformaEducativa/");
+        exit();
+    }
+
+    $pageTitle = "Editar Tarea";
+    require_once __DIR__ . '/../views/editar_tarea.php';
+}
+
+// Actualizar la tarea con datos del formulario
+public function actualizar() {
+    verificarSesionActiva();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = $_POST['id'] ?? null;
+        $materia = $_POST['materia'] ?? '';
+        $grado = $_POST['grado'] ?? '';
+        $curso = $_POST['curso'] ?? '';
+        $descripcion = $_POST['descripcion'] ?? '';
+        $estado = $_POST['estado'] ?? 'Pendiente';
+
+        if ($id === null) {
+            header("Location: /PlataformaEducativa/");
+            exit();
+        }
+
+        // Actualizar tarea en la sesión
+        if (isset($_SESSION['tareas'])) {
+            foreach ($_SESSION['tareas'] as &$tarea) {
+                if ($tarea->id == $id) {
+                    $tarea->materia = $materia;
+                    $tarea->grado = $grado;
+                    $tarea->curso = $curso;
+                    $tarea->descripcion = $descripcion;
+                    $tarea->estado = $estado;
+                    break;
+                }
+            }
+            unset($tarea); // rompiendo referencia
+        }
+
+        // Redirigir a la lista de tareas
+        header("Location: /PlataformaEducativa/");
+        exit();
+    } else {
+        // Si no es POST redirigir a página principal
+        header("Location: /PlataformaEducativa/");
+        exit();
+    }
+}
 }
