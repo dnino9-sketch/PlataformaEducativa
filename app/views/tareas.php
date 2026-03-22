@@ -26,7 +26,10 @@ require_once __DIR__ . '/templates/header.php';
             <option>En revisión</option>
         </select>
     </div>
-    <button class="btn btn-success">+ Crear Tarea</button>
+    <!-- Boton Crear Tarea modificado con enlace correcto -->
+    <a href="/PlataformaEducativa/index.php?action=crear_tarea" class="btn btn-success">
+        + Crear Tarea
+    </a>
 </div>
 
 <table class="table table-hover align-middle">
@@ -66,7 +69,11 @@ require_once __DIR__ . '/templates/header.php';
                 ?>
             </td>
             <td>
-                <button class="btn btn-primary btn-sm">Ver Tarea</button>
+                <!-- Boton Ver Tarea modificado con enlace correcto y ID de tarea -->
+                <a href="/PlataformaEducativa/index.php?action=ver_tarea&id=<?php echo $tarea->id; ?>" 
+   class="btn btn-primary btn-sm">
+                   Ver Tarea
+                </a>
             </td>
         </tr>
         <?php endforeach; ?>
