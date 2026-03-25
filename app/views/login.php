@@ -9,17 +9,16 @@
 
     <form method="POST" action="/PlataformaEducativa/index.php?action=login">
         <div class="mb-3">
-            <label for="email" class="form-label">Correo electrónico:</label>
-            <input type="email" id="email" name="email" class="form-control" required autofocus>
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" required autofocus>
         </div>
-
         <div class="mb-3">
-            <label for="password" class="form-label">Contraseña:</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" required>
         </div>
-
         <button type="submit" class="btn btn-primary w-100">Ingresar</button>
     </form>
+    <p class="mt-3 text-center">¿No tienes cuenta? <a href="/PlataformaEducativa/index.php?action=registro">Regístrate aquí</a></p>
 </div>
 
 <?php require_once __DIR__ . '/templates/footer.php'; ?>
